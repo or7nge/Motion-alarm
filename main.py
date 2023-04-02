@@ -1,6 +1,7 @@
 import cv2
 import pyautogui
 import time
+from playsound import playsound
 
 DETECTION_LEVEL = 10
 
@@ -47,6 +48,7 @@ def motion_detection():
             pyautogui.keyDown("alt")
             pyautogui.press("tab")
             pyautogui.keyUp("alt")
+            playsound("alarm.wav")
             active = False
 
         # Display the resulting frame
