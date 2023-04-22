@@ -1,6 +1,5 @@
 import cv2
 import pyautogui
-import time
 from playsound import playsound
 
 DETECTION_LEVEL = 10
