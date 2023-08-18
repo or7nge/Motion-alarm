@@ -43,7 +43,7 @@ class MotionDetector:
         self.active = False
         self.last_detection = 0
         self.detection_level = 10
-        self.detection_time = 3
+        self.detection_time = 0.5
         self.target_game = "Valorant"
         self.window_mgr = WindowMgr()
 
