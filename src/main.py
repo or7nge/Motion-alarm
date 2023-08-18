@@ -17,6 +17,10 @@ class MotionDetector:
     def motion_detected(self):
         if self.active:
             playsound("res/alarm2.wav", 0)
+            pyautogui.keyDown("Alt")
+            pyautogui.press("Tab")
+            pyautogui.keyUp("Alt")
+
         # Add blue rectangle around the self.frame
         self.last_detection = time.time()
         self.active = False
