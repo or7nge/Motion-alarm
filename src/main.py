@@ -16,7 +16,7 @@ class MotionDetector:
 
     def motion_detected(self):
         if self.active:
-            playsound("res/alarm.wav", 0)
+            playsound("res/alarm2.wav", 0)
         # Add blue rectangle around the self.frame
         self.last_detection = time.time()
         self.active = False
