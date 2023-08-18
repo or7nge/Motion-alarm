@@ -5,31 +5,30 @@ import win32gui, win32com.client
 import re
 
 
+# Encapsulates some calls to the winapi for window management
 class WindowMgr:
-    """Encapsulates some calls to the winapi for window management"""
-
     def __init__(self):
-        """Constructor"""
         self._handle = None
 
+    # Find a window by its class_name
     def find_window(self, class_name, window_name=None):
-        """find a window by its class_name"""
         self._handle = win32gui.FindWindow(class_name, window_name)
 
+    # Pass to win32gui.EnumWindows() to check all the opened windows
     def _window_enum_callback(self, hwnd, wildcard):
-        """Pass to win32gui.EnumWindows() to check all the opened windows"""
         if re.match(wildcard, str(win32gui.GetWindowText(hwnd))) is not None:
             self._handle = hwnd
 
+    # Find a window whose title matches the wildcard regex
     def find_window_wildcard(self, wildcard):
-        """find a window whose title matches the wildcard regex"""
         self._handle = None
         win32gui.EnumWindows(self._window_enum_callback, wildcard)
 
+    # Put the window in the foreground
     def set_foreground(self):
-        """put the window in the foreground"""
         win32gui.SetForegroundWindow(self._handle)
 
+    # Open the window with the given name
     def open_window(self, name):
         self.find_window_wildcard(f".*{name}.*")
         self.set_foreground()
@@ -93,11 +92,11 @@ class MotionDetector:
                     self.motion_detected()
 
             if self.active:
-                cv2.putText(self.frame, "ON", (15, 90), cv2.FONT_HERSHEY_SIMPLEX, 3, (0, 255, 0), 12)
+                cv2.putText(self.frame, "ON", (15, 90), cv2.FONT_HERSHEY_SIMPLEX, 3, (100, 223, 124), 12)
             else:
-                cv2.putText(self.frame, "OFF", (15, 90), cv2.FONT_HERSHEY_SIMPLEX, 3, (0, 0, 255), 12)
+                cv2.putText(self.frame, "OFF", (15, 90), cv2.FONT_HERSHEY_SIMPLEX, 3, (75, 75, 229), 12)
             if time.time() - self.last_detection < self.detection_time:
-                cv2.rectangle(self.frame, (0, 0), (self.frame.shape[1], self.frame.shape[0]), (255, 0, 0), 15)
+                cv2.rectangle(self.frame, (0, 0), (self.frame.shape[1], self.frame.shape[0]), (91, 176, 247), 15)
             cv2.imshow("Camera", self.frame)
             self.last_frame = blurred
 
