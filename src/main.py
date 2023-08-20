@@ -3,6 +3,8 @@ from playsound import playsound
 import time
 import win32gui, win32com.client
 import re
+import keyboard
+from win10toast import ToastNotifier
 
 
 # Encapsulates some calls to the winapi for window management
@@ -36,20 +38,26 @@ class WindowMgr:
 
 class MotionDetector:
     def __init__(self):
-        self.video = cv2.VideoCapture(1)
+        self.video = cv2.VideoCapture(0)
+        self.toast = ToastNotifier()
         self.last_frame = None
         self.frame = None
         self.active = False
         self.last_detection = 0
+        self.last_switch = 0
+        self.switch_time = 0.3
         self.detection_level = 10
         self.detection_time = 0.5
-        self.target_game = "Valorant"
+        self.target_game = "VALORANT"
         self.window_mgr = WindowMgr()
 
     def motion_detected(self):
         if self.active:
             playsound("res/alarm2.wav", 0)
-            self.window_mgr.open_window("Camera")
+            try:
+                self.window_mgr.open_window("Visual Studio Code")
+            except:
+                pass
 
         # Add blue rectangle around the self.frame
         self.last_detection = time.time()
@@ -100,7 +108,14 @@ class MotionDetector:
             cv2.imshow("Camera", self.frame)
             self.last_frame = blurred
 
-            cv2.setMouseCallback("Camera", self.switch_detection, param=self.frame)
+            # cv2.setMouseCallback("Camera", self.switch_detection, param=self.frame)
+            if keyboard.is_pressed("win+alt+m") and time.time() - self.last_switch >= self.switch_time:
+                self.active = not self.active
+                if self.active:
+                    self.toast.show_toast("ON", "Motion detecion", duration=0.1, threaded=True)
+                else:
+                    self.toast.show_toast("OFF", "Motion detecion", duration=0.1, threaded=True)
+                self.last_switch = time.time()
             if cv2.waitKey(1) & 0xFF == 27:
                 break
 
