@@ -46,31 +46,25 @@ class MotionDetector:
         self.last_detection = 0
         self.last_switch = 0
         self.switch_time = 0.3
-        self.detection_level = 10
+        self.detection_level = 8
         self.detection_time = 0.5
-        self.target_game = "VALORANT"
         self.window_mgr = WindowMgr()
+        self.camera_loop()
+        
+    def send_toast(self, title, message):
+        self.toast.show_toast(title, message, icon_path=None, duration=0.1, threaded=True)
 
     def motion_detected(self):
         if self.active:
             playsound("res/alarm2.wav", 0)
             try:
-                self.window_mgr.open_window("Visual Studio Code")
+                self.window_mgr.open_window("Visual Studio Code - Insiders")
             except:
                 pass
 
         # Add blue rectangle around the self.frame
         self.last_detection = time.time()
         self.active = False
-
-    def switch_detection(self, event, x, y, flags, param):
-        if event == cv2.EVENT_LBUTTONDOWN or event == cv2.EVENT_RBUTTONDOWN:
-            if event == cv2.EVENT_RBUTTONDOWN and not self.active:
-                try:
-                    self.window_mgr.open_window(self.target_game)
-                except:
-                    pass
-            self.active = not self.active
 
     def camera_loop(self):
         cv2.namedWindow("Camera")
@@ -108,13 +102,12 @@ class MotionDetector:
             cv2.imshow("Camera", self.frame)
             self.last_frame = blurred
 
-            # cv2.setMouseCallback("Camera", self.switch_detection, param=self.frame)
             if keyboard.is_pressed("win+alt+m") and time.time() - self.last_switch >= self.switch_time:
                 self.active = not self.active
                 if self.active:
-                    self.toast.show_toast("ON", "Motion detecion", duration=0.1, threaded=True)
+                    self.send_toast("ON", "Motion detecion")
                 else:
-                    self.toast.show_toast("OFF", "Motion detecion", duration=0.1, threaded=True)
+                    self.send_toast("OFF", "Motion detecion")
                 self.last_switch = time.time()
             if cv2.waitKey(1) & 0xFF == 27:
                 break
@@ -123,5 +116,4 @@ class MotionDetector:
 if __name__ == "__main__":
     shell = win32com.client.Dispatch("WScript.Shell")
     shell.SendKeys(" ")  # Undocks my focus from Python IDLE
-    detector = MotionDetector()
-    detector.camera_loop()
+    MotionDetector()
